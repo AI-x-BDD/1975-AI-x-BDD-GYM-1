@@ -22,6 +22,7 @@ describe('任務搜尋與篩選', () => {
   const visible = () => [...root.querySelectorAll('li')]
     .filter((item) => !item.hidden).map((item) => item.firstElementChild.textContent);
   beforeEach(() => {
+    localStorage.clear();
     document.body.innerHTML = '<main></main>';
     root = document.querySelector('main');
     mountIssueTracker(root);
@@ -119,6 +120,6 @@ describe('任務搜尋與篩選', () => {
     mountIssueTracker(root);
     expect(root.querySelector('#task-search').value).toBe('');
     expect(root.querySelector('#status-filter').value).toBe('');
-    expect(root.querySelector('[data-filter-summary]').textContent).toBe('顯示 0 / 0 筆任務');
+    expect(root.querySelector('[data-filter-summary]').textContent).toBe('顯示 1 / 1 筆任務');
   });
 });

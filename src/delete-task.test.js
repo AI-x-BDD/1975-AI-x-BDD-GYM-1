@@ -13,6 +13,7 @@ describe('刪除任務', () => {
   };
   const remove = (item) => item.querySelector('[data-delete]').click();
   beforeEach(() => {
+    localStorage.clear();
     document.body.innerHTML = '<main></main>';
     root = document.querySelector('main');
     mountIssueTracker(root);
@@ -101,15 +102,13 @@ describe('刪除任務', () => {
     expect(root.querySelectorAll('li')).toHaveLength(0);
   });
 
-  it('刪除流程不讀寫 localStorage', () => {
-    const calls = ['getItem', 'setItem', 'removeItem', 'clear'].map((key) =>
-      vi.spyOn(Storage.prototype, key),
-    );
+  it('確認刪除後重新掛載不會恢復任務', () => {
     const item = add('任務');
     remove(item);
     confirm.mockReturnValue(true);
     remove(item);
-    calls.forEach((spy) => expect(spy).not.toHaveBeenCalled());
+    mountIssueTracker(root);
+    expect(root.querySelectorAll('li')).toHaveLength(0);
   });
 });
 

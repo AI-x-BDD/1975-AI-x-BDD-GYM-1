@@ -16,6 +16,7 @@ describe('編輯任務', () => {
   };
   const save = (item) => item.querySelector('button[type="submit"]').click();
   beforeEach(() => {
+    localStorage.clear();
     document.body.innerHTML = '<main></main>';
     root = document.querySelector('main');
     mountIssueTracker(root);
@@ -91,16 +92,15 @@ describe('編輯任務', () => {
     expect(root.querySelector('[data-empty-state]').hidden).toBe(true);
   });
 
-  it('編輯後的 HTML 仍安全呈現為文字，不讀寫 Storage', () => {
-    const calls = ['getItem', 'setItem', 'removeItem', 'clear'].map((key) =>
-      vi.spyOn(Storage.prototype, key),
-    );
+  it('編輯後的 HTML 仍安全呈現為文字並保存', () => {
     const item = add('原始');
     edit(item).value = '<img src=x onerror=alert(1)>';
     save(item);
     expect(item.firstElementChild.textContent).toBe('<img src=x onerror=alert(1)>');
     expect(item.querySelector('img')).toBeNull();
-    calls.forEach((spy) => expect(spy).not.toHaveBeenCalled());
+    mountIssueTracker(root);
+    expect(root.querySelector('li').firstElementChild.textContent).toBe('<img src=x onerror=alert(1)>');
+    expect(root.querySelector('img')).toBeNull();
   });
 });
 

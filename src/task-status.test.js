@@ -18,6 +18,7 @@ describe('任務狀態切換', () => {
     select.dispatchEvent(new Event('change', { bubbles: true }));
   };
   beforeEach(() => {
+    localStorage.clear();
     document.body.innerHTML = '<main></main>';
     root = document.querySelector('main');
     mountIssueTracker(root);
@@ -89,15 +90,11 @@ describe('任務狀態切換', () => {
     expect(other.querySelector('select').value).toBe('進行中');
   });
 
-  it('狀態只保存在記憶體，重新掛載清空且不存取 Storage', () => {
-    const spies = ['getItem', 'setItem', 'removeItem', 'clear'].map((method) =>
-      vi.spyOn(Storage.prototype, method),
-    );
+  it('重新掛載保留狀態，新任務仍為待辦', () => {
     change(add(), '已完成');
     mountIssueTracker(root);
-    expect(root.querySelectorAll('li')).toHaveLength(0);
+    expect(root.querySelector('li select').value).toBe('已完成');
     expect(add().querySelector('select').value).toBe('待辦');
-    spies.forEach((spy) => expect(spy).not.toHaveBeenCalled());
   });
 });
 

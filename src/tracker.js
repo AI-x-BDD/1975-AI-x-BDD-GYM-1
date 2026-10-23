@@ -1,11 +1,13 @@
+import { loadTasks, saveTasks } from './storage.js';
 import { changeTaskStatus, deleteTask, renameTask, TASK_STATUSES } from './task.js';
 
 export function mountIssueTracker(root) {
-  // Each mounted tracker owns its state; refreshing starts a new session.
-  const tasks = [];
+  const loaded = loadTasks();
+  const tasks = loaded.tasks;
 
   root.innerHTML = `
     <h1>Mini Issue Tracker</h1>
+    <p data-storage-message role="status"></p>
     <form novalidate>
       <label for="task-title">任務標題</label>
       <div class="entry">
@@ -33,6 +35,13 @@ export function mountIssueTracker(root) {
     <p data-empty-state>目前沒有任務</p>
     <ul aria-label="任務清單" aria-live="polite"></ul>
   `;
+
+  const storageMessage = root.querySelector('[data-storage-message]');
+  storageMessage.textContent = loaded.error;
+  const persist = () => {
+    storageMessage.textContent = saveTasks(tasks)
+      ? '' : '無法儲存任務；目前變更僅保留於此頁面，重新整理後可能遺失。';
+  };
 
   const form = root.querySelector('form');
   const input = root.querySelector('input');
@@ -73,20 +82,8 @@ export function mountIssueTracker(root) {
     applyFilters();
     search.focus();
   });
-  applyFilters();
 
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const title = input.value.trim();
-    if (!title) {
-      error.textContent = '請輸入任務標題，不能只有空白。';
-      input.setAttribute('aria-invalid', 'true');
-      input.focus();
-      return;
-    }
-
-    const task = { id: crypto.randomUUID(), title, status: TASK_STATUSES[0] };
-    tasks.push(task);
+  const renderTask = (task) => {
     const item = document.createElement('li');
     item.dataset.taskId = task.id;
     const titleElement = document.createElement('span');
@@ -107,6 +104,7 @@ export function mountIssueTracker(root) {
     statusSelect.value = task.status;
     statusSelect.addEventListener('change', () => {
       changeTaskStatus(task, statusSelect.value);
+      persist();
       status.textContent = task.status;
       statusSelect.value = task.status;
       applyFilters();
@@ -121,24 +119,26 @@ export function mountIssueTracker(root) {
     deleteButton.addEventListener('click', () => {
       if (!window.confirm(`確定要永久刪除任務「${task.title}」嗎？此操作無法復原。`)) return;
       if (!deleteTask(tasks, task.id)) return;
+      persist();
       item.remove();
       applyFilters();
       input.focus();
     });
     item.append(titleElement, status, statusSelect, editButton, deleteButton);
     editButton.addEventListener('click', () => {
+      const editorId = crypto.randomUUID();
       const editor = document.createElement('form');
       editor.className = 'task-edit';
       editor.noValidate = true;
       editor.innerHTML = `
-        <label for="edit-${task.id}">編輯任務標題</label>
-        <input id="edit-${task.id}" name="title" required
-          aria-describedby="edit-error-${task.id}" />
+        <label for="edit-${editorId}">編輯任務標題</label>
+        <input id="edit-${editorId}" name="title" required
+          aria-describedby="edit-error-${editorId}" />
         <div class="edit-actions">
           <button type="submit">儲存</button>
           <button type="button" data-cancel>取消</button>
         </div>
-        <p id="edit-error-${task.id}" role="alert"></p>
+        <p id="edit-error-${editorId}" role="alert"></p>
       `;
       const editInput = editor.querySelector('input');
       const editError = editor.querySelector('[role="alert"]');
@@ -162,6 +162,7 @@ export function mountIssueTracker(root) {
           editInput.focus();
           return;
         }
+        persist();
         titleElement.textContent = task.title;
         closeEditor();
         applyFilters();
@@ -169,6 +170,25 @@ export function mountIssueTracker(root) {
       editor.querySelector('[data-cancel]').addEventListener('click', closeEditor);
     });
     list.append(item);
+  };
+
+  for (const task of tasks) renderTask(task);
+  applyFilters();
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const title = input.value.trim();
+    if (!title) {
+      error.textContent = '請輸入任務標題，不能只有空白。';
+      input.setAttribute('aria-invalid', 'true');
+      input.focus();
+      return;
+    }
+
+    const task = { id: crypto.randomUUID(), title, status: TASK_STATUSES[0] };
+    tasks.push(task);
+    renderTask(task);
+    persist();
     applyFilters();
 
     input.value = '';

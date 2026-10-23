@@ -11,6 +11,7 @@ describe('新增任務與任務清單', () => {
   };
 
   beforeEach(() => {
+    localStorage.clear();
     document.body.innerHTML = '<main id="app"></main>';
     root = document.querySelector('#app');
     mountIssueTracker(root);
@@ -83,17 +84,13 @@ describe('新增任務與任務清單', () => {
     expect(root.querySelector('img')).toBeNull();
   });
 
-  it('重新掛載後任務清空，且不讀寫 localStorage', () => {
+  it('重新掛載保留任務且不影響其他儲存資料', () => {
     localStorage.setItem('unrelated', 'preserve');
-    const original = { ...localStorage };
-    const storageCalls = ['getItem', 'setItem', 'removeItem', 'clear'].map((method) =>
-      vi.spyOn(Storage.prototype, method),
-    );
-    add('暫存任務');
+    add('保存任務');
+    const id = root.querySelector('li').dataset.taskId;
     mountIssueTracker(root);
-    expect(root.querySelectorAll('li')).toHaveLength(0);
-    expect(root.querySelector('[data-empty-state]').hidden).toBe(false);
-    storageCalls.forEach((spy) => expect(spy).not.toHaveBeenCalled());
-    expect({ ...localStorage }).toEqual(original);
+    expect(root.querySelector('li').firstElementChild.textContent).toBe('保存任務');
+    expect(root.querySelector('li').dataset.taskId).toBe(id);
+    expect(localStorage.getItem('unrelated')).toBe('preserve');
   });
 });
