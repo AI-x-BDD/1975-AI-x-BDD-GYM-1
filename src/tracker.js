@@ -1,4 +1,4 @@
-import { deleteTask, renameTask } from './task.js';
+import { changeTaskStatus, deleteTask, renameTask, TASK_STATUSES } from './task.js';
 
 export function mountIssueTracker(root) {
   // Each mounted tracker owns its state; refreshing starts a new session.
@@ -36,15 +36,31 @@ export function mountIssueTracker(root) {
       return;
     }
 
-    const task = { id: crypto.randomUUID(), title, status: '待辦' };
+    const task = { id: crypto.randomUUID(), title, status: TASK_STATUSES[0] };
     tasks.push(task);
     const item = document.createElement('li');
     item.dataset.taskId = task.id;
     const titleElement = document.createElement('span');
+    titleElement.id = `title-${task.id}`;
     titleElement.textContent = task.title;
     const status = document.createElement('span');
     status.className = 'status';
     status.textContent = task.status;
+    const statusSelect = document.createElement('select');
+    statusSelect.setAttribute('aria-label', '任務狀態');
+    statusSelect.setAttribute('aria-describedby', titleElement.id);
+    for (const value of TASK_STATUSES) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = value;
+      statusSelect.append(option);
+    }
+    statusSelect.value = task.status;
+    statusSelect.addEventListener('change', () => {
+      changeTaskStatus(task, statusSelect.value);
+      status.textContent = task.status;
+      statusSelect.value = task.status;
+    });
     const editButton = document.createElement('button');
     editButton.type = 'button';
     editButton.textContent = '編輯';
@@ -59,7 +75,7 @@ export function mountIssueTracker(root) {
       emptyState.hidden = tasks.length > 0;
       input.focus();
     });
-    item.append(titleElement, status, editButton, deleteButton);
+    item.append(titleElement, status, statusSelect, editButton, deleteButton);
     editButton.addEventListener('click', () => {
       const editor = document.createElement('form');
       editor.className = 'task-edit';

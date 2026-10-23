@@ -12,3 +12,11 @@ export function deleteTask(tasks, id) {
   tasks.splice(index, 1);
   return true;
 }
+
+export const TASK_STATUSES = ['待辦', '進行中', '已完成'];
+
+export function changeTaskStatus(task, status) {
+  if (!TASK_STATUSES.includes(status)) return false;
+  task.status = status;
+  return true;
+}

@@ -16,7 +16,8 @@ h2 { font-size: 1.2rem; margin-top: 32px; }
 label { display: block; margin-bottom: 8px; }
 .entry { display: flex; gap: 12px; }
 input { flex: 1; min-width: 0; border: 1px solid #8994a7; }
-input, button { padding: 12px; border-radius: 6px; font: inherit; }
+input, button, select { padding: 12px; border-radius: 6px; font: inherit; }
+select { border: 1px solid #8994a7; background: white; color: inherit; max-width: 100%; }
 button { border: 0; background: #2453b8; color: white; cursor: pointer; }
 :focus-visible { outline: 3px solid #b26700; outline-offset: 3px; }
 [role="alert"] { color: #a01b26; min-height: 1.5em; }
