@@ -1,4 +1,4 @@
-# AI-x-BDD-GYM-1：Skills 與 Mini Issue Tracker 實作紀錄
+# qazs10015-AI-x-BDD-GYM-1：Skills 與 Mini Issue Tracker 實作紀錄
 
 ## 關於這個 repo
 
