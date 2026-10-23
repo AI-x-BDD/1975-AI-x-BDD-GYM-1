@@ -1,3 +1,5 @@
+import { renameTask } from './task.js';
+
 export function mountIssueTracker(root) {
   // Each mounted tracker owns its state; refreshing starts a new session.
   const tasks = [];
@@ -34,15 +36,60 @@ export function mountIssueTracker(root) {
       return;
     }
 
-    const task = { title, status: '待辦' };
+    const task = { id: crypto.randomUUID(), title, status: '待辦' };
     tasks.push(task);
     const item = document.createElement('li');
+    item.dataset.taskId = task.id;
     const titleElement = document.createElement('span');
     titleElement.textContent = task.title;
     const status = document.createElement('span');
     status.className = 'status';
     status.textContent = task.status;
-    item.append(titleElement, status);
+    const editButton = document.createElement('button');
+    editButton.type = 'button';
+    editButton.textContent = '編輯';
+    item.append(titleElement, status, editButton);
+    editButton.addEventListener('click', () => {
+      const editor = document.createElement('form');
+      editor.className = 'task-edit';
+      editor.noValidate = true;
+      editor.innerHTML = `
+        <label for="edit-${task.id}">編輯任務標題</label>
+        <input id="edit-${task.id}" name="title" required
+          aria-describedby="edit-error-${task.id}" />
+        <div class="edit-actions">
+          <button type="submit">儲存</button>
+          <button type="button" data-cancel>取消</button>
+        </div>
+        <p id="edit-error-${task.id}" role="alert"></p>
+      `;
+      const editInput = editor.querySelector('input');
+      const editError = editor.querySelector('[role="alert"]');
+      editInput.value = task.title;
+      titleElement.hidden = true;
+      editButton.hidden = true;
+      item.append(editor);
+      editInput.focus();
+
+      const closeEditor = () => {
+        editor.remove();
+        titleElement.hidden = false;
+        editButton.hidden = false;
+        editButton.focus();
+      };
+      editor.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!renameTask(task, editInput.value)) {
+          editError.textContent = '請輸入任務標題，不能只有空白。';
+          editInput.setAttribute('aria-invalid', 'true');
+          editInput.focus();
+          return;
+        }
+        titleElement.textContent = task.title;
+        closeEditor();
+      });
+      editor.querySelector('[data-cancel]').addEventListener('click', closeEditor);
+    });
     list.append(item);
     emptyState.hidden = tasks.length > 0;
 

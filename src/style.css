@@ -21,10 +21,14 @@ button { border: 0; background: #2453b8; color: white; cursor: pointer; }
 :focus-visible { outline: 3px solid #b26700; outline-offset: 3px; }
 [role="alert"] { color: #a01b26; min-height: 1.5em; }
 ul { padding: 0; list-style: none; }
-li { display: flex; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid #dce1ea; }
+li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid #dce1ea; }
 li > :first-child { overflow-wrap: anywhere; min-width: 0; }
 .status { flex-shrink: 0; align-self: start; padding: 2px 8px; background: #e9eefb; border-radius: 4px; }
 @media (max-width: 480px) {
   body { padding: 12px; }
   main { margin: 16px auto; padding: 20px; }
 }
+
+.task-edit { flex-basis: 100%; min-width: 0; }
+.task-edit input { box-sizing: border-box; width: 100%; }
+.edit-actions { display: flex; gap: 12px; margin-top: 12px; }
