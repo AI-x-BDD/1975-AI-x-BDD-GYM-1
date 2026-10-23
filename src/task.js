@@ -5,3 +5,10 @@ export function renameTask(task, title) {
   task.title = trimmedTitle;
   return true;
 }
+
+export function deleteTask(tasks, id) {
+  const index = tasks.findIndex((task) => task.id === id);
+  if (index === -1) return false;
+  tasks.splice(index, 1);
+  return true;
+}

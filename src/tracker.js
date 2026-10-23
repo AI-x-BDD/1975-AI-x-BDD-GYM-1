@@ -1,4 +1,4 @@
-import { renameTask } from './task.js';
+import { deleteTask, renameTask } from './task.js';
 
 export function mountIssueTracker(root) {
   // Each mounted tracker owns its state; refreshing starts a new session.
@@ -48,7 +48,18 @@ export function mountIssueTracker(root) {
     const editButton = document.createElement('button');
     editButton.type = 'button';
     editButton.textContent = '編輯';
-    item.append(titleElement, status, editButton);
+    const deleteButton = document.createElement('button');
+    deleteButton.type = 'button';
+    deleteButton.textContent = '刪除';
+    deleteButton.dataset.delete = '';
+    deleteButton.addEventListener('click', () => {
+      if (!window.confirm(`確定要永久刪除任務「${task.title}」嗎？此操作無法復原。`)) return;
+      if (!deleteTask(tasks, task.id)) return;
+      item.remove();
+      emptyState.hidden = tasks.length > 0;
+      input.focus();
+    });
+    item.append(titleElement, status, editButton, deleteButton);
     editButton.addEventListener('click', () => {
       const editor = document.createElement('form');
       editor.className = 'task-edit';
