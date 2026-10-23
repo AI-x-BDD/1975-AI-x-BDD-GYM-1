@@ -87,3 +87,8 @@ https://github.com/qazs10015/AI-x-BDD-GYM-1.git
 ---
 
 © 2026 水球球特務有限公司版權所有，侵害必究。
+
+---
+
+推錯地方了，這邊才對
+https://github.com/AI-x-BDD/qazs10015-AI-x-BDD-GYM-1.git
