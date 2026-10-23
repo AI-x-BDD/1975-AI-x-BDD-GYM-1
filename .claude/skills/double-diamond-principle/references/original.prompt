@@ -1,0 +1,32 @@
+請使用 Anthropic 官方 /skill-creator，建立一支名為 double-diamond-principle 的 Skill。
+
+【研究來源】
+https://www.designcouncil.org.uk/resources/framework-for-innovation/
+
+【任務要求】
+1. 先閱讀 Design Council 官方 Double Diamond 框架，並沿著官方相關資源研究延伸內容。
+2. 整理 Discover、Define、Develop、Deliver 四階段，以及發散思考、收斂思考、以人為本、協作、視覺化溝通及反覆迭代等重要原則。
+3. 研究不同階段適合採用的工具、方法、產出、適用條件與例外。
+4. 明確區分 Design Council 原始框架，以及你將它應用於 AI Agent 軟體開發時所提出的延伸規則。
+5. 使用 /skill-creator 建立真正可啟用的 Skill，包含 SKILL.md 及必要 references，保留原始來源 URL。
+6. Skill 必須能引導 Agent：
+   - Discover：理解使用者、問題背景、現有資訊與未知假設。
+   - Define：定義核心問題、範圍及可驗收的成功條件。
+   - Develop：探索與比較合理方案，說明取捨。
+   - Deliver：選擇方案，進行小範圍實作、測試、驗證與改善。
+   - 根據需求不確定性與風險，動態調整分析深度。
+   - 對明確且低風險的小修改，避免過度分析或不必要的提問。
+   - 發現新證據時允許回到前一階段重新修正。
+   - 不得把 AI 的推測偽裝成已完成的使用者訪談或真實研究結果。
+7. 設計至少五個測試情境，包括明確小修改、模糊需求、多方案比較、高風險決策及需求變更。實際測試並優化。
+8. 驗證 Skill 結構與格式符合 skill-creator 的規定。
+
+【完成時回報】
+- Skill 的實際路徑與資料夾結構
+- 官方來源及核心方法論
+- 測試案例、結果及調整
+- 四階段在軟體開發中的實際應用方式
+- 如何避免過度分析
+- 已知限制與改善建議
+
+請實際建立、測試並完成優化，不要只提供文字草稿。

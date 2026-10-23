@@ -9,3 +9,8 @@
 - Prompt 紀錄與 `docs/observations/` 的開發觀察分開保存。不要將憑證或其他敏感資料原文寫入檔案，必要時遮蔽並註明。
 
 - 不讀取既有 prompt 的內容；新功能以檔名判斷下一個編號，同功能補充以追加方式保存，索引亦採追加更新。
+
+## 課程模板規範
+
+- 課程產出規範見 [CLAUDE.md](./CLAUDE.md)，適用所有 AI agent。
+- `.agents/skills/` 與 `.claude/skills/` 的 skills 內容保持一致。

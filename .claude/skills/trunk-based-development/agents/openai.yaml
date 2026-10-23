@@ -1,0 +1,3 @@
+interface:
+  display_name: "Trunk Based Development"
+  short_description: "Develop small tested changes with trunk based integration"

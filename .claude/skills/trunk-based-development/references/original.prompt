@@ -1,0 +1,30 @@
+請使用 Anthropic 官方 /skill-creator，建立一支名為 trunk-based-development 的 Skill。
+
+【研究來源】
+https://trunkbaseddevelopment.com/
+
+【任務要求】
+1. 先閱讀官方網站的核心內容，並進一步研究短期分支、持續整合、Feature Flags、Branch by Abstraction、主幹穩定性、分支模型及相關實務。
+2. 整理 TBD 的關鍵概念、工作流程、適用條件、常見反模式、例外與工程權衡。
+3. 區分官方建議與你自行增加的實務規則，並保留來源 URL。
+4. 使用 /skill-creator 建立真正可啟用的 Skill，包含 SKILL.md 與必要 references。
+5. Skill 必須能引導 Agent：
+   - 開發前檢查目前 Git 分支、工作目錄狀態及專案測試方式。
+   - 將大型需求拆成可安全整合的小型變更。
+   - 選擇直接在主幹開發或短期 Feature Branch 的合理策略。
+   - 維持主幹可建置、可測試、可部署的狀態。
+   - 遇到未完成功能時評估 Feature Flag 或 Branch by Abstraction。
+   - 在整合前執行相關測試，確認是否有回歸問題。
+   - 記錄分支建立、Commit、整合及測試結果。
+   - 遵守使用者授權，不擅自 push、merge、刪除分支或改寫 Git 歷史。
+6. 設計至少五個測試情境，包括小功能開發、長期分支風險、未完成功能、測試失敗及大型重構。實際測試並優化。
+7. 驗證 Skill 結構與格式符合 skill-creator 的規定。
+
+【完成時回報】
+- Skill 的實際路徑與資料夾結構
+- 研究來源與重要原則
+- 測試案例、結果及修正
+- 如何判斷 Agent 是否真正遵循 TBD
+- 已知限制與改善建議
+
+請實際建立、測試並完成優化，不要只提供文字草稿。
