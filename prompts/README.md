@@ -19,3 +19,7 @@
 - [feature-06.md](feature-06.md)：任務搜尋與篩選
 
 - [feature-07.md](feature-07.md)：資料持久化。
+
+- [observation-summary.md](observation-summary.md)：整理實作過程的觀察，放入專案 README。
+
+- [readme-and-publish.md](readme-and-publish.md)：依課程模板整理 README 並推送至 GitHub。
