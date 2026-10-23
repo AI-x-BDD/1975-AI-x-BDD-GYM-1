@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mountIssueTracker } from './tracker.js';
 
-describe('新增任務', () => {
+describe('新增任務與任務清單', () => {
   let root;
   let input;
   const add = (title) => {
@@ -43,10 +43,38 @@ describe('新增任務', () => {
     expect(input.hasAttribute('aria-invalid')).toBe(false);
   });
 
-  it('連續新增保留原有任務，允許重複標題', () => {
-    add('任務');
-    add('任務');
-    expect(root.querySelectorAll('li')).toHaveLength(2);
+  it('連續新增即時顯示所有任務的標題與狀態，保留原有任務', () => {
+    add('準備需求');
+    add('撰寫測試');
+    add('準備需求');
+    const items = [...root.querySelectorAll('li')];
+    expect(items.map((item) => item.firstElementChild.textContent)).toEqual([
+      '準備需求', '撰寫測試', '準備需求',
+    ]);
+    expect(items.map((item) => item.querySelector('.status').textContent)).toEqual([
+      '待辦', '待辦', '待辦',
+    ]);
+  });
+
+  it('沒有任務時顯示空清單提示', () => {
+    expect(root.querySelector('[data-empty-state]').textContent).toBe('目前沒有任務');
+    expect(root.querySelector('[data-empty-state]').hidden).toBe(false);
+    expect(root.querySelectorAll('li')).toHaveLength(0);
+  });
+
+  it('無效新增後仍顯示空清單提示', () => {
+    add('   ');
+    expect(root.querySelector('[data-empty-state]').hidden).toBe(false);
+    expect(root.querySelectorAll('li')).toHaveLength(0);
+  });
+
+  it('第一筆任務新增後即時隱藏空清單提示', () => {
+    add('第一筆任務');
+    expect(root.querySelector('[data-empty-state]').hidden).toBe(true);
+    expect(root.querySelector('li').firstElementChild.textContent).toBe('第一筆任務');
+    add(' ');
+    expect(root.querySelector('[data-empty-state]').hidden).toBe(true);
+    expect(root.querySelectorAll('li')).toHaveLength(1);
   });
 
   it('將 HTML 標題顯示為文字', () => {
@@ -64,6 +92,7 @@ describe('新增任務', () => {
     add('暫存任務');
     mountIssueTracker(root);
     expect(root.querySelectorAll('li')).toHaveLength(0);
+    expect(root.querySelector('[data-empty-state]').hidden).toBe(false);
     storageCalls.forEach((spy) => expect(spy).not.toHaveBeenCalled());
     expect({ ...localStorage }).toEqual(original);
   });

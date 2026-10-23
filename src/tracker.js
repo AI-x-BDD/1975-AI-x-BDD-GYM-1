@@ -14,6 +14,7 @@ export function mountIssueTracker(root) {
       <p id="title-error" role="alert"></p>
     </form>
     <h2>任務清單</h2>
+    <p data-empty-state>目前沒有任務</p>
     <ul aria-label="任務清單" aria-live="polite"></ul>
   `;
 
@@ -21,6 +22,7 @@ export function mountIssueTracker(root) {
   const input = root.querySelector('input');
   const error = root.querySelector('[role="alert"]');
   const list = root.querySelector('ul');
+  const emptyState = root.querySelector('[data-empty-state]');
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -42,6 +44,7 @@ export function mountIssueTracker(root) {
     status.textContent = task.status;
     item.append(titleElement, status);
     list.append(item);
+    emptyState.hidden = tasks.length > 0;
 
     input.value = '';
     error.textContent = '';
