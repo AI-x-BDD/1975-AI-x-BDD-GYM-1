@@ -16,6 +16,20 @@ export function mountIssueTracker(root) {
       <p id="title-error" role="alert"></p>
     </form>
     <h2>任務清單</h2>
+    <div class="task-filters" role="search" aria-label="搜尋與篩選任務">
+      <div>
+        <label for="task-search">搜尋任務標題</label>
+        <input id="task-search" type="search" placeholder="輸入標題關鍵字" />
+      </div>
+      <div>
+        <label for="status-filter">篩選任務狀態</label>
+        <select id="status-filter">
+          <option value="">全部狀態</option>
+        </select>
+      </div>
+      <button type="button" data-reset-filters>清除條件</button>
+    </div>
+    <p data-filter-summary role="status"></p>
     <p data-empty-state>目前沒有任務</p>
     <ul aria-label="任務清單" aria-live="polite"></ul>
   `;
@@ -25,6 +39,41 @@ export function mountIssueTracker(root) {
   const error = root.querySelector('[role="alert"]');
   const list = root.querySelector('ul');
   const emptyState = root.querySelector('[data-empty-state]');
+
+  const search = root.querySelector('#task-search');
+  const statusFilter = root.querySelector('#status-filter');
+  const summary = root.querySelector('[data-filter-summary]');
+  for (const value of TASK_STATUSES) {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = value;
+    statusFilter.append(option);
+  }
+
+  const applyFilters = () => {
+    const keyword = search.value.trim().toLowerCase();
+    const byId = new Map(tasks.map((task) => [task.id, task]));
+    let visibleCount = 0;
+    for (const item of list.children) {
+      const task = byId.get(item.dataset.taskId);
+      item.hidden = !task.title.toLowerCase().includes(keyword)
+        || (statusFilter.value !== '' && task.status !== statusFilter.value);
+      if (!item.hidden) visibleCount++;
+      if (item.hidden && item.contains(document.activeElement)) search.focus();
+    }
+    emptyState.hidden = visibleCount > 0;
+    emptyState.textContent = tasks.length === 0 ? '目前沒有任務' : '沒有符合條件的任務';
+    summary.textContent = `顯示 ${visibleCount} / ${tasks.length} 筆任務`;
+  };
+  search.addEventListener('input', applyFilters);
+  statusFilter.addEventListener('change', applyFilters);
+  root.querySelector('[data-reset-filters]').addEventListener('click', () => {
+    search.value = '';
+    statusFilter.value = '';
+    applyFilters();
+    search.focus();
+  });
+  applyFilters();
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -60,6 +109,7 @@ export function mountIssueTracker(root) {
       changeTaskStatus(task, statusSelect.value);
       status.textContent = task.status;
       statusSelect.value = task.status;
+      applyFilters();
     });
     const editButton = document.createElement('button');
     editButton.type = 'button';
@@ -72,7 +122,7 @@ export function mountIssueTracker(root) {
       if (!window.confirm(`確定要永久刪除任務「${task.title}」嗎？此操作無法復原。`)) return;
       if (!deleteTask(tasks, task.id)) return;
       item.remove();
-      emptyState.hidden = tasks.length > 0;
+      applyFilters();
       input.focus();
     });
     item.append(titleElement, status, statusSelect, editButton, deleteButton);
@@ -114,11 +164,12 @@ export function mountIssueTracker(root) {
         }
         titleElement.textContent = task.title;
         closeEditor();
+        applyFilters();
       });
       editor.querySelector('[data-cancel]').addEventListener('click', closeEditor);
     });
     list.append(item);
-    emptyState.hidden = tasks.length > 0;
+    applyFilters();
 
     input.value = '';
     error.textContent = '';
