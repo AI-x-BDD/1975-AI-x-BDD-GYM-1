@@ -1,0 +1,3 @@
+interface:
+  display_name: 'Git Conventional Commit'
+  short_description: 'Inspect changes and prepare scoped Conventional Commits'
